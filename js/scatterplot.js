@@ -293,6 +293,7 @@ function scatterplot() {
         //groups data by line for linear regression of each group
 
         console.log(selected)
+        console.log(":)")
 
         //groups data by line for linear regression of each group
         const groupedData = d3.nest()
