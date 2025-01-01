@@ -300,6 +300,7 @@ function scatterplot() {
                 chart.drawTrendLine(linearRegression(values), key);
 
             });
+            console.log(":)")
 
         }
 
