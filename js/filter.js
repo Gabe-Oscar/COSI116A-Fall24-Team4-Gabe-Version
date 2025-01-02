@@ -2,7 +2,7 @@ function filter(){
     function chart(){
         document.addEventListener('DOMContentLoaded', () => {
         // Lines to include in the selection
-        const lines = ['All Lines', 'Red Line', 'Green Line', 'Blue Line', 'Orange Line'];
+        const lines = ['-', 'Red', 'Green', 'Blue', 'Orange'];
 
         // Select the filter menu container in the HTML
         const filterContainer = d3.select('#filterMenu');
@@ -14,26 +14,26 @@ function filter(){
         // Add "Select Lines" heading
         filterWrapper.append('div')
             .attr('class', 'filter-heading')
-            .text('Select Line(s)');
+            .text('Lines');
 
         // Create line selection grid
         const lineGrid = filterWrapper.append('div')
             .attr('class', 'line-grid');
 
         // Store selected lines
-        let selectedLines = ['All Lines'];
+        let selectedLines = ['-'];
 
         // Function to toggle line selection
         function toggleLineSelection(line) {
-            if (line === 'All Lines') {
-                // If "All Lines" is selected, clear other selections
-                selectedLines = ['All Lines'];
+            if (line === '-') {
+                // If "-" is selected, clear other selections
+                selectedLines = ['-'];
                 lineGrid.selectAll('.line-cell')
                     .classed('selected', false)
-                    .classed('all-lines', d => d === 'All Lines');
+                    .classed('all-lines', d => d === '-');
             } else {
-                // Remove "All Lines" if it's selected
-                if (selectedLines.includes('All Lines')) {
+                // Remove "-" if it's selected
+                if (selectedLines.includes('-')) {
                     selectedLines = [];
                 }
 
@@ -46,7 +46,7 @@ function filter(){
 
                 // Update button styles
                 lineGrid.selectAll('.line-cell')
-                    .classed('selected', d => selectedLines.includes(d) && d !== 'All Lines')
+                    .classed('selected', d => selectedLines.includes(d) && d !== '-')
                     .classed('all-lines', false);
             }
             return selectedLines;
@@ -73,12 +73,13 @@ function filter(){
             .attr('class', 'filter-reset-button')
             .text('Reset')
             .on('click', () => {
-                dispatchLine(toggleLineSelection('All Lines')            );
+                dispatchLine(toggleLineSelection('-')            );
             });
         });
 
         function dispatchLine(selectedLines){         
-            console.log("called")                                     
+            console.log("called")          
+            console.log(selectedLines)                           
             dispatcher.call("lineUpdated", this, selectedLines);
         }
     }

@@ -1,19 +1,19 @@
 // Calendar Visualization with D3 and Year Selection
 
 const monthsToNumbers = {
-  "January": "01",
-  "February": "02",
-  "March": "03",
-  "April": "04",
-  "May": "05",
-  "June": "06",
-  "July": "07",
-  "August": "08",
-  "September": "09",
-  "October": "10",
-  "November": "11",
-  "December": "12",
-  "All Months": "All Months"
+  "1": "01",
+  "2": "02",
+  "3": "03",
+  "4": "04",
+  "5": "05",
+  "6": "06",
+  "7": "07",
+  "8": "08",
+  "9": "09",
+  "10": "10",
+  "11": "11",
+  "12": "12",
+  "-": "-"
 };
 
 function calendar(){
@@ -21,14 +21,14 @@ function calendar(){
   function chart(){
   document.addEventListener('DOMContentLoaded', () => {
       const monthNames = [
-          'January', 'February', 'March',
-          'April', 'May', 'June',
-          'July', 'August', 'September',
-          'October', 'November', 'December'
+          '1', '2', '3',
+          '4', '5', '6',
+          '7', '8', '9',
+          '10', '11', '12'
       ];
   
       // Years to include in the selection
-      const years = ['All Years', ...Array.from({ length: 9 }, (_, i) => 2016 + i)];
+      const years = ['-', ...Array.from({ length: 9 }, (_, i) => 2016 + i)];
   
   
       // Select the calendar container in the HTML
@@ -37,45 +37,35 @@ function calendar(){
       // Create a container for the entire calendar section
       const calendarWrapper = d3.select('#calendar').append('div')
           .style('display', 'flex')
-          .style('gap', '20px');
+         //  .style('gap', '0px');
   
       // Create year selection sidebar
       const yearSidebar = calendarWrapper.append('div')
           .attr('class', 'year-selection-sidebar')
-          .style('width', '200px')
-          .style('background-color', '#f9f9f9')
-          .style('border', '1px solid #e0e0e0')
-          .style('border-radius', '8px')
-          .style('padding', '15px')
-          .style('height', 'fit-content');
-  
+
       // Add "Select Year(s)" heading
       yearSidebar.append('div')
-          .style('text-align', 'center')
-          .style('font-size', '20px')
-          .style('font-weight', 'bold')
-          .style('margin-bottom', '15px')
-          .style('color', 'rgb(109, 46, 109)')
-          .text('Select Year(s)');
+          .attr('class', 'calendar-heading')
+          .text('Years');
   
       // Create year selection grid
       const yearGrid = yearSidebar.append('div')
           .style('display', 'grid')
-          .style('grid-template-columns', 'repeat(2, 1fr)')
-          .style('grid-gap', '10px');
+         // .style('grid-template-columns', 'repeat(1, 1fr)');
+          //.style('grid-gap', '0px');
   
       // Store selected years
       let selectedYears = [];
   
       // Function to toggle year selection
       function toggleYearSelection(year) {
-          if (year === 'All Years') {
+          if (year === '-') {
               console.log("toggled")
-              // If "All Years" is selected, clear other selections
+              // If "-" is selected, clear other selections
               selectedYears = [];
               yearGrid.selectAll('.year-cell')
-                  .style('background-color', d => d === 'All Years' ? 'rgb(109, 46, 109)' : '#fff')
-                  .style('color', d => d === 'All Years' ? '#fff' : '#000');
+                  .style('background-color', d => d === '-' ? 'rgb(109, 46, 109)' : '#fff')
+                  .style('color', d => d === '-' ? '#fff' : '#000');
           } else {
   
               // Toggle the specific year
@@ -88,16 +78,16 @@ function calendar(){
   
               if(selectedYears.length == 0){
                 console.log("toggling")
-                toggleYearSelection('All Years')
+                toggleYearSelection('-')
               } else{
                 // Update button styles
                 yearGrid.selectAll('.year-cell')
                     .style('background-color', d => {
-                        if (d === 'All Years') return '#fff';
+                        if (d === '-') return '#fff';
                         return selectedYears.includes(d) ? 'rgb(109, 46, 109)' : '#fff';
                     })
                     .style('color', d => {
-                        if (d === 'All Years') return '#000';
+                        if (d === '-') return '#000';
                         return selectedYears.includes(d) ? '#fff' : '#000';
                     });
                 }
@@ -114,12 +104,8 @@ function calendar(){
           .enter()
           .append('div')
           .attr('class', 'year-cell')
-          .style('border', '1px solid #ccc')
-          .style('padding', '10px') 
-          .style('text-align', 'center')
-          .style('cursor', 'pointer')
-          .style('background-color', d => d === 'All Years' ? 'rgb(109, 46, 109)' : '#fff')
-          .style('color', d => d === 'All Years' ? '#fff' : '#000')
+          .style('background-color', d => d === '-' ? 'rgb(109, 46, 109)' : '#fff')
+          .style('color', d => d === '-' ? '#fff' : '#000')
           .text(d => d)
           .on('click', function(d) {
               toggleYearSelection(d);
@@ -128,33 +114,24 @@ function calendar(){
   
       // Create a container for the calendar grid
       const calendarContent = calendarWrapper.append('div')
-          .attr('class', 'calendar-content')
+          .attr('class', 'year-selection-sidebar')
           .style('flex-grow', '1')
           .style('position', 'relative'); // For positioning reset button
   
       // Add reset button
       const resetButton = calendarContent.append('div')
           .attr('class', 'reset-button')
-          .style('position', 'absolute')
-          .style('bottom', '10px')
-          .style('right', '10px')
-          .style('background-color', 'rgb(109, 46, 109)')
-          .style('color', '#fff')
-          .style('padding', '5px 10px')
-          .style('border-radius', '5px')
-          .style('cursor', 'pointer')
-          .style('font-size', '12px')
           .text('Reset')
           .on('click', () => {
-              toggleYearSelection('All Years');
-              toggleMonthSelection('All Months');
+              toggleYearSelection('-');
+              toggleMonthSelection('-');
               dispatchProtocol();
           });
   
       // Function to update calendar
       let selectedMonths = [];
       function updateCalendar() {
-          const currentYear = selectedYears.includes('All Years') ? 'All Years' : selectedYears.join(', ');
+          const currentYear = selectedYears.includes('-') ? '-' : selectedYears.join(', ');
           createCalendar(currentYear);
       }
   
@@ -165,33 +142,20 @@ function calendar(){
   
           // Create year heading
           calendarContent.append('div')
-              .attr('class', 'calendar-year-heading')
-              .style('text-align', 'center')
-              .style('font-size', '20px')
-              .style('font-weight', 'bold')
-              .style('margin-bottom', '20px')
-              .style('color', 'rgb(109, 46, 109)')
-              .text(`Select Month(s)`);
+              .attr('class', 'calendar-heading')
+              .text('Months');
   
           // Create a grid for months
           const monthGrid = calendarContent.append('div')
-              .attr('class', 'month-grid')
-              .style('display', 'grid')
-              .style('grid-template-columns', 'repeat(3, 1fr)')
-              .style('grid-gap', '10px');
-  
-          // Create month cells, starting with "All Months"
+
+          // Create month cells, starting with "-"
           const monthCells = monthGrid.selectAll('.month-cell')
-              .data(['All Months', ...monthNames])
+              .data(['-', ...monthNames])
               .enter()
               .append('div')
               .attr('class', 'month-cell')
-              .style('border', '1px solid #ccc')
-              .style('padding', '10px')
-              .style('text-align', 'center')
-              .style('cursor', 'pointer')
               .style('background-color', d => {
-                  if (d === 'All Months') {
+                  if (d === '-') {
                       return selectedMonths.length === 0 || selectedMonths.length === monthNames.length 
                           ? 'rgb(109, 46, 109)' 
                           : '#fff';
@@ -199,7 +163,7 @@ function calendar(){
                   return selectedMonths.includes(d) ? 'rgb(109, 46, 109)' : '#fff';
               })
               .style('color', d => {
-                  if (d === 'All Months') {
+                  if (d === '-') {
                       return selectedMonths.length === 0 || selectedMonths.length === monthNames.length 
                           ? '#fff' 
                           : '#000';
@@ -224,7 +188,7 @@ function calendar(){
       function dispatchProtocol(){
                 
                 console.log(selectedYears, selectedMonths);
-                  //if(selectedMonths[0] === "All Months" || selectedMonths.length == 0){
+                  //if(selectedMonths[0] === "-" || selectedMonths.length == 0){
                   //  console.log("clearing!" + "yaer: " + year + "month: " + month + " :D")
                     //dispatchMonth("CLEAR")
                   //}
@@ -239,13 +203,13 @@ function calendar(){
   
       // Function to toggle month selection
       function toggleMonthSelection(month) {
-          if (month === 'All Months') {
-              // If "All Months" is selected, clear other selections
+          if (month === '-') {
+              // If "-" is selected, clear other selections
               selectedMonths = [];
               updateMonthStyles();
           } else {
-              // Remove "All Months" from considerations
-              const allMonthsIndex = selectedMonths.indexOf('All Months');
+              // Remove "-" from considerations
+              const allMonthsIndex = selectedMonths.indexOf('-');
               if (allMonthsIndex > -1) {
                   selectedMonths.splice(allMonthsIndex, 1);
               }
@@ -265,7 +229,7 @@ function calendar(){
       function updateMonthStyles() {
           calendarContent.selectAll('.month-cell')
               .style('background-color', d => {
-                  if (d === 'All Months') {
+                  if (d === '-') {
                       return selectedMonths.length === 0 || selectedMonths.length === monthNames.length 
                           ? 'rgb(109, 46, 109)' 
                           : '#fff';
@@ -273,7 +237,7 @@ function calendar(){
                   return selectedMonths.includes(d) ? 'rgb(109, 46, 109)' : '#fff';
               })
               .style('color', d => {
-                  if (d === 'All Months') {
+                  if (d === '-') {
                       return selectedMonths.length === 0 || selectedMonths.length === monthNames.length 
                           ? '#fff' 
                           : '#000';
@@ -282,8 +246,8 @@ function calendar(){
               });
       }
   
-      // Initialize calendar with "All Years" and "All Months"
-      createCalendar('All Years');
+      // Initialize calendar with "-" and "-"
+      createCalendar('-');
   });
     }
     chart.selectionDispatcher = function (_) {

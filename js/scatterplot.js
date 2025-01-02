@@ -25,10 +25,12 @@ function scatterplot() {
         return { slope, intercept, x1, x2, y1, y2};
     }
 
+    const svg = d3.select("#vis-svg");
+    const container = svg.node().getBoundingClientRect();
     
     var margin = { top: 50, right: 50, bottom: 70, left: 85 },
-        width = 600 - margin.left - margin.right,
-        height = 600 - margin.top - margin.bottom;
+        width = container.width - margin.left - margin.right,
+        height = container.height - margin.top - margin.bottom;
 
      //define x-scale
      const x = d3.scaleLinear()
@@ -52,7 +54,7 @@ function scatterplot() {
         .style("border-radius", "2.5px")
         .style("padding", "5px");
     var color = d3.scaleOrdinal()
-        .domain(["Red Line", "Blue Line", "Green Line", "Orange Line", "All Lines"])
+        .domain(["Red", "Blue", "Green", "Orange", "-"])
         .range([d3.rgb(255, 0, 0), d3.rgb(0, 0, 255), d3.rgb(0, 255, 0), d3.rgb(255, 128, 0), d3.rgb(0,0,0)]);
 
     
@@ -226,7 +228,7 @@ function scatterplot() {
 
             });
 
-            drawTrendLine(linearRegression(data), "All Lines");
+            drawTrendLine(linearRegression(data), "-");
 
 
         });
@@ -240,10 +242,11 @@ function scatterplot() {
     // Given selected data from another visualization 
     // select the relevant elements here (linking)
     chart.processDispatch = function (dispatchString) {
+        console.log(dispatchString)
         if (dispatchString[0] === "filter") {
             lines = dispatchString[1]
             d3.selectAll("line").each(function () {
-                if (lines[0] === 'All Lines') {
+                if (lines[0] === '-') {
                     d3.select(this).classed("unfiltered", false) //set to unfiltered if we want everything filteredgit
                 } else {
                     let strokeColor = d3.rgb(d3.select(this).style("stroke"));
@@ -252,12 +255,12 @@ function scatterplot() {
                 }
             })
             selectableElements.each(function (d) {
-                if (lines[0] === 'All Lines') {
+                if (lines[0] === '-') {
                     d3.select(this).classed("unfiltered", false) //set to unfiltered if we want everything filteredgit
                 } else {
                     d3.select(this).classed("unfiltered", true)
                     for (i = 0; i < lines.length; i++) {
-                        d3.select(this).classed("unfiltered", d3.select(this).classed("unfiltered") && !d3.select(this).classed(lines[i].split(" ")[0])) //update unfiltered to false if it is in one of the filtered classes, keep false if already set to false
+                        d3.select(this).classed("unfiltered", d3.select(this).classed("unfiltered") && !d3.select(this).classed(lines[i])) //update unfiltered to false if it is in one of the filtered classes, keep false if already set to false
                     }
                 }
 
@@ -301,11 +304,12 @@ function scatterplot() {
         .entries(trend_points.data());
         
         
-        chart.drawTrendLine(linearRegression(trend_points.data()), "All Lines")
+        chart.drawTrendLine(linearRegression(trend_points.data()), "-")
 
         groupedData.forEach(group => {
             const key = group.key;
             const values = group.values;
+            console.log(key)
 
             chart.drawTrendLine(linearRegression(values), key);
 
